@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
@@ -27,11 +28,16 @@ public class TranslationCacheHandler {
 				String type = (String) payload.get("type");
 				String code = (String) payload.get("code");
 				
-				translationService.clearCache(tag, type, code);
+				if (StringUtils.isNotBlank(tag) && StringUtils.isNotBlank(type) && StringUtils.isNotBlank(code)) {
+					translationService.clearCache(tag, type, code);					
+				} else {
+					translationService.clearCache();					
+				}				
 			} else {
 				translationService.clearCache();				
 			}
 		} catch (Exception e) {
+			translationService.clearCache();				
 			log.error(ExceptionUtils.getStackTrace(e));
 		}
 	}
@@ -48,7 +54,7 @@ public class TranslationCacheHandler {
 					message.setBody(map);
 				}
 			}
-
+						
 			payload = (Map<String, Object>) message.getBody();
 		} catch (IOException e) {
 			log.error(ExceptionUtils.getStackTrace(e));
