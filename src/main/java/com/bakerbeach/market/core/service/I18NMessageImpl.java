@@ -57,6 +57,7 @@ public class I18NMessageImpl implements I18NMessage{
 		return lastUpdate;
 	}
 
+	@Override
 	public void setLastUpdate(Date lastUpdate) {
 		this.lastUpdate = lastUpdate;
 	}

@@ -12,6 +12,7 @@ import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.MessageSourceSupport;
 import org.springframework.util.ObjectUtils;
 
@@ -23,12 +24,15 @@ import com.bakerbeach.market.translation.api.service.TranslationService;
 
 public class TranslationServiceImpl extends MessageSourceSupport implements TranslationService {
 	private static final Logger log = LoggerFactory.getLogger(TranslationServiceImpl.class);
-
+	
 	private Map<String, MessageMap> reverseTranslationCaches = new HashMap<String, MessageMap>();
 	private Map<String, MessageMap> messageCaches = new HashMap<String, MessageMap>();
 
 	private MessageDao messageDao;
 	private String defaultLocale;
+	
+	@Value("${translation.cache.time:6000000}")
+	private Integer cacheTime;
 
 	@Override
 	public String getMessage(String tag, String code, Object[] args, String defaultMessage, Locale locale) {
@@ -49,14 +53,13 @@ public class TranslationServiceImpl extends MessageSourceSupport implements Tran
 		}
 		String key = keyBuilder.toString();
 		
-		
 		I18NMessage message = null;
 		MessageMap reverseTranslationCache = reverseTranslationCaches.get(key);
 		if (reverseTranslationCache != null) {
 			message = reverseTranslationCache.get(text);
 			if (message != null) {
 				Date now = new Date();
-				if (message.getLastUpdate().getTime() > now.getTime() - 6000000) {
+				if (message.getLastUpdate().getTime() > now.getTime() - cacheTime) {
 					return message;
 				}
 			}
@@ -93,7 +96,7 @@ public class TranslationServiceImpl extends MessageSourceSupport implements Tran
 			I18NMessage message = messageCache.get(code);
 			if (message != null) {
 				Date now = new Date();
-				if (message.getLastUpdate().getTime() > now.getTime() - 6000000) {
+				if (message.getLastUpdate().getTime() > now.getTime() - cacheTime) {
 					return message;
 				}
 			}
@@ -107,29 +110,21 @@ public class TranslationServiceImpl extends MessageSourceSupport implements Tran
 		
 		return message;
 	}
-
-	/*
-	private I18NMessage getMessage(String tag, String type, String code) {
-		MessageMap messageCache = messageCaches.get(tag);
-		if (messageCache != null) {
-			I18NMessage message = messageCache.get(code);
-			if (message != null) {
-				Date now = new Date();
-				if (message.getLastUpdate().getTime() > now.getTime() - 6000000) {
-					return message;
-				}
-			}
-		}
-		
-		I18NMessage message = loadMessage(tag, type, code);
-		if (!messageCaches.containsKey(tag)) {
-			messageCaches.put(tag, new MessageMap());
-		}
-		messageCaches.get(tag).put(code, message);
-		
-		return message;
+	
+	@Override
+	public void clearCache() {
+		messageCaches.clear();		
 	}
-	*/
+	
+	@Override
+	public void clearCache(String tag, String type, String code) {
+		String key = new StringBuilder(tag).append(":").append(type).toString();
+		
+		MessageMap messageCache = messageCaches.get(key);
+		if (messageCache != null) {
+			messageCache.get(code).setLastUpdate(new Date(0));
+		}
+	}
 	
 	private I18NMessage loadMessage(String tag, String type, String code) {
 		try {
@@ -187,8 +182,6 @@ public class TranslationServiceImpl extends MessageSourceSupport implements Tran
 			temp.append('_').append(country);
 			result.add(0, LocaleUtils.toLocale(temp.toString()));
 		}
-		
-		Locale test = Locale.UK;
 
 		if (variant.length() > 0 && (language.length() > 0 || country.length() > 0)) {
 			temp.append('_').append(variant);
