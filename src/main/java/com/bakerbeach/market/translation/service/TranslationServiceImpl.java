@@ -46,6 +46,11 @@ public class TranslationServiceImpl extends MessageSourceSupport implements Tran
 	}
 	
 	@Override
+	public void save(I18NMessage message) {
+		messageDao.save(message);
+	}
+	
+	@Override
 	public I18NMessage getReverseUrlTranslation(List<String> tags, String text, Locale locale) throws TranslationServiceException {
 		StringBuilder keyBuilder = new StringBuilder();
 		for (String tag : tags) {
@@ -163,7 +168,7 @@ public class TranslationServiceImpl extends MessageSourceSupport implements Tran
 		
 		return renderMessage(defaultText, locale, args);
 	}
-	
+		
 	private List<Locale> calculateLocaleKeysToCheck(Locale locale) {
 		List<Locale> result = new ArrayList<>(4);
 		String language = locale.getLanguage();

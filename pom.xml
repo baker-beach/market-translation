@@ -16,7 +16,7 @@
         <dependency>
             <groupId>com.bakerbeach.market</groupId>
             <artifactId>market-translation-api</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.2</version>
         </dependency>
 		<dependency>
 			<groupId>org.apache.activemq</groupId>
@@ -28,5 +28,5 @@
         <plugins>
         </plugins>
     </build>
-	<version>1.0.4</version>
+	<version>1.0.5</version>
 </project>

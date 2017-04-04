@@ -13,4 +13,6 @@ public interface MessageDao {
 
 	I18NMessage findReverseTranslation(List<String> tags, String type, String translation, Locale locale) throws DAOException;
 
+	void save(I18NMessage message);
+
 }
