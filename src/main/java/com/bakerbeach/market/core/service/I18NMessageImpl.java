@@ -16,6 +16,7 @@ public class I18NMessageImpl implements I18NMessage{
 	private Map<String,String> messages = new HashMap<String,String>();
 	private Date lastUpdate = new Date();
 
+	@Override
 	public Map<String, String> getMessages() {
 		return messages;
 	}

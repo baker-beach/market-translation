@@ -131,7 +131,8 @@ public class TranslationServiceImpl extends MessageSourceSupport implements Tran
 		}
 	}
 	
-	private I18NMessage loadMessage(String tag, String type, String code) {
+	@Override
+	public I18NMessage loadMessage(String tag, String type, String code) {
 		try {
 			I18NMessage message = messageDao.findByCode(tag, type, code);
 			if (message != null) {
@@ -142,6 +143,8 @@ public class TranslationServiceImpl extends MessageSourceSupport implements Tran
 		} catch (Exception e) {
 			I18NMessageImpl m = new I18NMessageImpl();
 			m.setMessageKey(code);
+			m.setTag(tag);
+			m.setType(type);
 			return m;
 		}
 	}
@@ -159,6 +162,20 @@ public class TranslationServiceImpl extends MessageSourceSupport implements Tran
 		}
 	}
 
+	@Override
+	public I18NMessage loadReverseTranslation(List<String> tags, String type, String text, Locale locale) throws TranslationServiceException {
+		try {
+			I18NMessage message = messageDao.findReverseTranslation(tags, type, text, locale);
+			if (message != null) {
+				return message;
+			} else {
+				throw new TranslationServiceException();
+			}
+		} catch (DAOException e) {
+			throw new TranslationServiceException();
+		}
+	}
+	
 	private String getText(I18NMessage message, String defaultText, Locale locale, Object[] args) {
 		for (Locale tmpLocale : calculateLocaleKeysToCheck(locale)) {
 			if (message.getText(tmpLocale) != null) {
