@@ -8,12 +8,12 @@ import java.util.Set;
 
 import com.bakerbeach.market.translation.api.model.I18NMessage;
 
-public class I18NMessageImpl implements I18NMessage{
+public class I18NMessageImpl implements I18NMessage {
 
 	private String messageKey;
 	private String tag;
 	private String type;
-	private Map<String,String> messages = new HashMap<String,String>();
+	private Map<String, String> messages = new HashMap<String, String>();
 	private Date lastUpdate = new Date();
 
 	@Override
@@ -52,7 +52,7 @@ public class I18NMessageImpl implements I18NMessage{
 	public String getText(String locale) {
 		return messages.get(locale);
 	}
-	
+
 	@Override
 	public Date getLastUpdate() {
 		return lastUpdate;
@@ -62,23 +62,34 @@ public class I18NMessageImpl implements I18NMessage{
 	public void setLastUpdate(Date lastUpdate) {
 		this.lastUpdate = lastUpdate;
 	}
-	
+
 	@Override
 	public String getTag() {
 		return tag;
 	}
-	
+
 	public void setTag(String tag) {
 		this.tag = tag;
 	}
-	
+
 	@Override
 	public String getType() {
 		return type;
 	}
-	
+
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder str = new StringBuilder();
+		str.append("code: ").append(getKey()).append(", tag: ").append(getTag()).append(", type: ").append(getType());
+		getMessages().forEach((k,v) -> {
+			str.append(", ").append(k).append(": ").append(v);			
+		});
+
+		return str.toString();
 	}
 
 }
