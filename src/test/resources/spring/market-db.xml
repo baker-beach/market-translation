@@ -11,7 +11,7 @@
 
 	<context:annotation-config />
 
-	<mongo:mongo id="cms" host="${cms.mongo.host}"
+<!-- 	<mongo:mongo id="cms" host="${cms.mongo.host}"
 		port="${cms.mongo.port}">
 		<mongo:options connections-per-host="${mongo.connectionsPerHost}"
 			threads-allowed-to-block-for-connection-multiplier="${mongo.threadsAllowedToBlockForConnectionMultiplier}"
@@ -26,6 +26,6 @@
 		username="${cms.mongo.dbUser}" password="${cms.mongo.dbPwd}" />
 	<bean id="cmsTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
 		<constructor-arg name="mongoDbFactory" ref="cmsDbFactory" />
-	</bean>
+	</bean> -->
 	
 </beans>
